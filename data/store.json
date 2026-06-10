@@ -1,0 +1,447 @@
+{
+  "inventory": [
+    {
+      "id": "1780562930421001",
+      "name": "Rice",
+      "sku": "RIC001",
+      "price": 60.0,
+      "qty": 78.0,
+      "unit": "kg",
+      "low_stock_threshold": 10
+    },
+    {
+      "id": "1780562930421002",
+      "name": "Wheat",
+      "sku": "WHT001",
+      "price": 35.0,
+      "qty": 75.0,
+      "unit": "kg",
+      "low_stock_threshold": 10
+    },
+    {
+      "id": "1780562930421003",
+      "name": "Oil",
+      "sku": "OIL001",
+      "price": 200.0,
+      "qty": 101.0,
+      "unit": "lit",
+      "low_stock_threshold": 10
+    },
+    {
+      "id": "1780562930421004",
+      "name": "Chips",
+      "sku": "CHP001",
+      "price": 10.0,
+      "qty": 88.0,
+      "unit": "units",
+      "low_stock_threshold": 10
+    },
+    {
+      "id": "1780562930421005",
+      "name": "Sugar",
+      "sku": "SUG001",
+      "price": 45.0,
+      "qty": 136.0,
+      "unit": "kg",
+      "low_stock_threshold": 15
+    },
+    {
+      "id": "1780562930421006",
+      "name": "Salt",
+      "sku": "SLT001",
+      "price": 20.0,
+      "qty": 190.0,
+      "unit": "kg",
+      "low_stock_threshold": 20
+    },
+    {
+      "id": "1780562930421007",
+      "name": "Milk",
+      "sku": "MLK001",
+      "price": 55.0,
+      "qty": 85.0,
+      "unit": "lit",
+      "low_stock_threshold": 15
+    },
+    {
+      "id": "1780562930421008",
+      "name": "Tea Powder",
+      "sku": "TEA001",
+      "price": 300.0,
+      "qty": 55.0,
+      "unit": "kg",
+      "low_stock_threshold": 10
+    },
+    {
+      "id": "1780568871552447",
+      "name": "Icecreem",
+      "sku": "ICE001",
+      "price": 100.0,
+      "qty": 9.0,
+      "unit": "box",
+      "low_stock_threshold": 10
+    },
+    {
+      "id": "1780568871553954",
+      "name": "Apple",
+      "sku": "APL001",
+      "price": 70.0,
+      "qty": 93.0,
+      "unit": "kg",
+      "low_stock_threshold": 10
+    }
+  ],
+  "orders": [
+    {
+      "id": "INV-1015",
+      "customer": "Praveen",
+      "items": [
+        {
+          "name": "Oil",
+          "qty": 3.0,
+          "price": 200.0,
+          "subtotal": 600.0
+        },
+        {
+          "name": "Sugar",
+          "qty": 2.0,
+          "price": 45.0,
+          "subtotal": 90.0
+        },
+        {
+          "name": "Rice",
+          "qty": 4.0,
+          "price": 60.0,
+          "subtotal": 240.0
+        }
+      ],
+      "total": 930.0,
+      "status": "paid",
+      "date": "04/06/2026",
+      "created_at": "2026-06-04T15:58:39.641035"
+    },
+    {
+      "id": "INV-1014",
+      "customer": "Manoj",
+      "items": [
+        {
+          "name": "Rice",
+          "qty": 3.0,
+          "price": 60.0,
+          "subtotal": 180.0
+        },
+        {
+          "name": "Oil",
+          "qty": 2.0,
+          "price": 200.0,
+          "subtotal": 400.0
+        }
+      ],
+      "total": 580.0,
+      "status": "paid",
+      "date": "04/06/2026",
+      "created_at": "2026-06-04T14:46:04.417549"
+    },
+    {
+      "id": "INV-1009",
+      "customer": "Amit",
+      "items": [
+        {
+          "name": "Rice",
+          "qty": 3,
+          "price": 60,
+          "subtotal": 180
+        },
+        {
+          "name": "Oil",
+          "qty": 2,
+          "price": 200,
+          "subtotal": 400
+        }
+      ],
+      "total": 580,
+      "status": "paid",
+      "date": "04/06/2026",
+      "created_at": "2026-06-04T15:20:00.000Z"
+    },
+    {
+      "id": "INV-1010",
+      "customer": "Sneha",
+      "items": [
+        {
+          "name": "Milk",
+          "qty": 4,
+          "price": 55,
+          "subtotal": 220
+        },
+        {
+          "name": "Sugar",
+          "qty": 2,
+          "price": 45,
+          "subtotal": 90
+        }
+      ],
+      "total": 310,
+      "status": "paid",
+      "date": "04/06/2026",
+      "created_at": "2026-06-04T15:22:00.000Z"
+    },
+    {
+      "id": "INV-1011",
+      "customer": "Vikram",
+      "items": [
+        {
+          "name": "Wheat",
+          "qty": 5,
+          "price": 35,
+          "subtotal": 175
+        },
+        {
+          "name": "Salt",
+          "qty": 3,
+          "price": 20,
+          "subtotal": 60
+        }
+      ],
+      "total": 235,
+      "status": "paid",
+      "date": "04/06/2026",
+      "created_at": "2026-06-04T15:25:00.000Z"
+    },
+    {
+      "id": "INV-1012",
+      "customer": "Rahul",
+      "items": [
+        {
+          "name": "Chips",
+          "qty": 10,
+          "price": 10,
+          "subtotal": 100
+        }
+      ],
+      "total": 100,
+      "status": "paid",
+      "date": "04/06/2026",
+      "created_at": "2026-06-04T15:28:00.000Z"
+    },
+    {
+      "id": "INV-1013",
+      "customer": "Manoj",
+      "items": [
+        {
+          "name": "Tea Powder",
+          "qty": 2,
+          "price": 300,
+          "subtotal": 600
+        }
+      ],
+      "total": 600,
+      "status": "paid",
+      "date": "04/06/2026",
+      "created_at": "2026-06-04T15:30:00.000Z"
+    }
+  ],
+  "customers": [
+    {
+      "id": "1780563020538001",
+      "name": "Amit",
+      "phone": "9999999999",
+      "email": "amit@example.com",
+      "orders": 2,
+      "total_spent": 835.0,
+      "created_at": "2026-06-04T15:10:00.000Z"
+    },
+    {
+      "id": "1780563020538002",
+      "name": "Sneha",
+      "phone": "8888888888",
+      "email": "sneha@example.com",
+      "orders": 2,
+      "total_spent": 585.0,
+      "created_at": "2026-06-04T15:12:00.000Z"
+    },
+    {
+      "id": "1780563020538003",
+      "name": "Vikram",
+      "phone": "7777777777",
+      "email": "vikram@example.com",
+      "orders": 2,
+      "total_spent": 855.0,
+      "created_at": "2026-06-04T15:15:00.000Z"
+    },
+    {
+      "id": "1780563020538004",
+      "name": "Rahul",
+      "phone": "6666666666",
+      "email": "rahul@example.com",
+      "orders": 2,
+      "total_spent": 280.0,
+      "created_at": "2026-06-04T12:43:00.000Z"
+    },
+    {
+      "id": "1780563020538005",
+      "name": "Manoj",
+      "phone": "5555555555",
+      "email": "manoj@example.com",
+      "orders": 4,
+      "total_spent": 2380.0,
+      "created_at": "2026-06-04T14:20:00.000Z"
+    },
+    {
+      "id": "1780568919640796",
+      "name": "Praveen",
+      "phone": "",
+      "email": "",
+      "orders": 1,
+      "total_spent": 930.0,
+      "created_at": "2026-06-04T15:58:39.641035"
+    }
+  ],
+  "activity": [
+    {
+      "type": "inventory",
+      "text": "Stock update: Rice",
+      "value": "-4",
+      "time": "3:58 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Stock update: Sugar",
+      "value": "-2",
+      "time": "3:58 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Stock update: Oil",
+      "value": "-3",
+      "time": "3:58 PM"
+    },
+    {
+      "type": "order",
+      "text": "Invoice INV-1015 for Praveen",
+      "value": "₹930",
+      "time": "3:58 PM"
+    },
+    {
+      "type": "customer",
+      "text": "Added customer: Praveen",
+      "value": "",
+      "time": "3:58 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Added product: Apple",
+      "value": "₹70",
+      "time": "3:57 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Added product: Icecreem",
+      "value": "₹100",
+      "time": "3:57 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Stock update: Oil",
+      "value": "+1",
+      "time": "2:46 PM"
+    },
+    {
+      "type": "order",
+      "text": "Order INV-1014 → paid",
+      "value": "",
+      "time": "2:46 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Stock update: Oil",
+      "value": "-2",
+      "time": "2:46 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Stock update: Rice",
+      "value": "-3",
+      "time": "2:46 PM"
+    },
+    {
+      "type": "order",
+      "text": "Invoice INV-1014 for Manoj",
+      "value": "₹580",
+      "time": "2:46 PM"
+    },
+    {
+      "type": "order",
+      "text": "Invoice INV-1009 for Amit",
+      "value": "₹580",
+      "time": "3:20 PM"
+    },
+    {
+      "type": "order",
+      "text": "Invoice INV-1010 for Sneha",
+      "value": "₹310",
+      "time": "3:22 PM"
+    },
+    {
+      "type": "order",
+      "text": "Invoice INV-1011 for Vikram",
+      "value": "₹235",
+      "time": "3:25 PM"
+    },
+    {
+      "type": "order",
+      "text": "Invoice INV-1012 for Rahul",
+      "value": "₹100",
+      "time": "3:28 PM"
+    },
+    {
+      "type": "order",
+      "text": "Invoice INV-1013 for Manoj",
+      "value": "₹600",
+      "time": "3:30 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Stock update: Rice",
+      "value": "-3",
+      "time": "3:20 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Stock update: Oil",
+      "value": "-2",
+      "time": "3:20 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Stock update: Milk",
+      "value": "-4",
+      "time": "3:22 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Stock update: Chips",
+      "value": "-10",
+      "time": "3:28 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Added product: Sugar",
+      "value": "₹45",
+      "time": "3:05 PM"
+    },
+    {
+      "type": "inventory",
+      "text": "Added product: Salt",
+      "value": "₹20",
+      "time": "3:05 PM"
+    },
+    {
+      "type": "customer",
+      "text": "Updated customer: Manoj",
+      "value": "orders +1",
+      "time": "3:30 PM"
+    }
+  ],
+  "order_counter": 1016
+}
