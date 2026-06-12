@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Approvals - BizFlow</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/auth.js"></script>
+    <script src="/static/nav.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="logo">BizFlow <span>AI</span></div>
+        <div class="model-badge">AI Approvals</div>
+        <button class="send-btn" onclick="logout()" style="margin-left:auto;">Logout</button>
+      </header>
+
+      <aside class="sidebar" id="appSidebar">
+        <a class="nav-item" href="/dashboard" data-min-role="manager">Dashboard</a>
+        <a class="nav-item" href="/chat">AI Chat <span class="nav-badge">AI</span></a>
+        <a class="nav-item" href="/inventory">Inventory</a>
+        <a class="nav-item" href="/orders">Orders</a>
+        <a class="nav-item" href="/customers">Customers</a>
+        <a class="nav-item" href="/reports" data-min-role="manager">Reports</a>
+        <a class="nav-item active" href="/approvals">Approvals</a>
+      </aside>
+
+      <main class="main">
+        <section class="panel active">
+          <div class="panel-header">
+            <h2>Pending AI Approvals</h2>
+            <div class="panel-sub">Review and approve AI-generated actions before they execute.</div>
+            <div class="panel-actions">
+              <input id="approvalsSearch" type="search" placeholder="Search pending approvals..." />
+              <select id="approvalsFilter">
+                <option value="all">All pending</option>
+                <option value="ai_batch">AI batches</option>
+              </select>
+              <button id="refreshBtn" class="send-btn">⟳</button>
+            </div>
+          </div>
+
+          <div id="pendingActionsList" class="pending-actions-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toastContainer" style="position:fixed;right:18px;bottom:18px;z-index:10000;display:flex;flex-direction:column;gap:8px"></div>
+    <script src="/static/approvals.js"></script>
+  </body>
+</html>

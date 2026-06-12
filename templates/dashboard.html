@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BizFlow Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/auth.js"></script>
+    <script src="/static/nav.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="logo">BizFlow <span>AI</span></div>
+        <div class="model-badge">Analytics</div>
+        <div class="header-status"><div class="pulse-dot"></div> Live</div>
+        <button class="send-btn" onclick="logout()" style="margin-left:auto;">Logout</button>
+      </header>
+
+      <aside class="sidebar" id="appSidebar">
+        <a class="nav-item active" href="/dashboard" data-min-role="manager">Dashboard</a>
+        <a class="nav-item" href="/chat">AI Chat <span class="nav-badge">AI</span></a>
+        <a class="nav-item" href="/inventory">Inventory</a>
+        <a class="nav-item" href="/orders">Orders</a>
+        <a class="nav-item" href="/customers">Customers</a>
+        <a class="nav-item" href="/reports" data-min-role="manager">Reports</a>
+        <a class="nav-item" href="/approvals" data-min-role="manager">Approvals</a>
+      </aside>
+
+      <main class="main">
+        <section class="panel active">
+          <div class="panel-header">
+            <h2>Overview</h2>
+            <div class="panel-sub">Key metrics and recent performance</div>
+            <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap" data-min-role="manager">
+              <button class="send-btn" type="button" onclick="downloadExport('/api/export/inventory', 'inventory.csv')">Export Inventory CSV</button>
+              <button class="send-btn" type="button" onclick="downloadExport('/api/export/customers', 'customers.csv')">Export Customers CSV</button>
+              <button class="send-btn" type="button" onclick="downloadExport('/api/export/orders', 'orders.csv')">Export Orders CSV</button>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Revenue (monthly)</div>
+              <div class="stat-value" id="statRevenue">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Active Customers</div>
+              <div class="stat-value" id="statCustomers">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Low stock items</div>
+              <div class="stat-value" id="statLowStock">—</div>
+            </div>
+            <div class="stat-card" data-min-role="manager">
+              <div class="stat-label">Pending approvals</div>
+              <div class="stat-value" id="statApprovals">—</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:320px;padding:12px;">
+              <canvas id="revenueChart" height="200"></canvas>
+            </div>
+            <div style="flex:1;min-width:320px;padding:12px;">
+              <canvas id="ordersChart" height="200"></canvas>
+            </div>
+            <div style="flex:1;min-width:320px;padding:12px;">
+              <canvas id="inventoryChart" height="200"></canvas>
+            </div>
+            <div style="flex:1;min-width:320px;padding:12px;">
+              <canvas id="customerChart" height="200"></canvas>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="loadingOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;">
+      <div style="background:var(--bg-surface);padding:20px;border-radius:10px;border:1px solid var(--border);">Loading dashboard…</div>
+    </div>
+
+    <div id="toastContainer" style="position:fixed;right:18px;bottom:18px;z-index:10000;display:flex;flex-direction:column;gap:8px"></div>
+
+    <script src="/static/dashboard.js"></script>
+  </body>
+</html>
