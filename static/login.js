@@ -16,7 +16,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const password = document.getElementById('password').value;
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch(apiUrl('/api/auth/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -24,7 +24,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       const result = await response.json();
       if (!response.ok) {
-        statusEl.textContent = result.error || 'Login failed';
+        statusEl.textContent = result.message || result.error || 'Login failed';
         return;
       }
 

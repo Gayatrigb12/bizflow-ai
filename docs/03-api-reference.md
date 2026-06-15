@@ -47,6 +47,7 @@ Sends a user message to Groq, executes returned actions, saves data, and returns
 | Field | Required | Description |
 |-------|----------|-------------|
 | `message` | Yes | Non-empty string after trim |
+| `session_id` | No | Client chat session id for history grouping |
 
 **Response 200 (success):**
 
@@ -63,16 +64,45 @@ Sends a user message to Groq, executes returned actions, saves data, and returns
 **Response 400:**
 
 ```json
-{ "error": "Message is required" }
+{ "error": true, "message": "Message is required", "code": 400 }
 ```
 
 **Response 500** (API key missing or placeholder):
 
 ```json
 {
-  "error": "Groq API key not configured",
-  "details": "Set GROQ_API_KEY in .env"
+  "error": true,
+  "message": "Groq API key not configured",
+  "code": 500
 }
+```
+
+---
+
+## `GET /api/chat/history`
+
+Returns persisted chat messages for the authenticated user session.
+
+**Query parameters:**
+
+| Param | Default | Description |
+|-------|---------|-------------|
+| `limit` | `30` | Max rows (capped at 100) |
+| `session_id` | — | Optional filter by client session id |
+
+**Response 200:**
+
+```json
+[
+  {
+    "id": 1,
+    "user_prompt": "Add product Rice",
+    "ai_response": "Rice has been added.",
+    "metadata": { "actions": [] },
+    "session_id": "session-123",
+    "created_at": "2026-06-15T10:00:00+00:00"
+  }
+]
 ```
 
 **Response 502** (network failure to Groq):

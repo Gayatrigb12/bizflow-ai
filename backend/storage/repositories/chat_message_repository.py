@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -14,31 +14,38 @@ class ChatMessageRepository:
 
     def add(
         self,
-        context_type: str,
-        role: str,
-        message: str,
-        context_id: Optional[int] = None,
-        actions: Optional[list] = None,
+        user_prompt: str,
+        ai_response: str,
+        session_id: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
         actor: Optional[str] = None,
+        context_type: str = 'general',
+        entity_type: Optional[str] = None,
+        entity_id: Optional[int] = None,
     ) -> ChatMessage:
         normalized_context = context_type if context_type in VALID_CONTEXTS else 'general'
         chat_message = ChatMessage(
-            context_type=normalized_context,
-            context_id=context_id,
-            role=role,
-            message=message,
-            actions=actions,
+            user_prompt=user_prompt,
+            ai_response=ai_response,
+            session_id=session_id,
+            metadata_json=metadata,
             actor=actor,
+            context_type=normalized_context,
+            entity_type=entity_type,
+            entity_id=entity_id,
         )
         self.session.add(chat_message)
         self.session.flush()
         return chat_message
 
-    def list_by_context(self, context_type: str, context_id: Optional[int] = None, limit: int = 50) -> List[ChatMessage]:
-        normalized_context = context_type if context_type in VALID_CONTEXTS else 'general'
-        stmt = select(ChatMessage).where(ChatMessage.context_type == normalized_context)
-        if context_id is not None:
-            stmt = stmt.where(ChatMessage.context_id == context_id)
-        stmt = stmt.order_by(ChatMessage.created_at.asc()).limit(limit)
+    def list_recent(
+        self,
+        limit: int = 30,
+        session_id: Optional[str] = None,
+    ) -> List[ChatMessage]:
+        stmt = select(ChatMessage)
+        if session_id:
+            stmt = stmt.where(ChatMessage.session_id == session_id)
+        stmt = stmt.order_by(ChatMessage.created_at.desc()).limit(limit)
         result = self.session.execute(stmt)
-        return result.scalars().all()
+        return list(result.scalars().all())

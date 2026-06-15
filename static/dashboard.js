@@ -55,8 +55,7 @@ function toast(message, type = 'info', timeout = 4000) {
   setTimeout(() => el.remove(), timeout);
 }
 
-async function init() {
-  await initNav();
+async function loadDashboard() {
   showLoading(true);
   try {
     const analytics = await fetchAnalytics();
@@ -122,4 +121,14 @@ async function init() {
   }
 }
 
-window.addEventListener('DOMContentLoaded', init);
+async function init() {
+  await initNav();
+  await loadDashboard();
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  registerDataRefreshHandler(() => loadDashboard(), 'inventory');
+  registerDataRefreshHandler(() => loadDashboard(), 'orders');
+  registerDataRefreshHandler(() => loadDashboard(), 'customers');
+  await init();
+});

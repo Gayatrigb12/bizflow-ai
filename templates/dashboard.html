@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>BizFlow Dashboard</title>
     <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/config.js"></script>
+    <script src="/static/api.js"></script>
     <script src="/static/auth.js"></script>
+    <script src="/static/events.js"></script>
     <script src="/static/nav.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
+    <div class="bg-glow glow1"></div>
+    <div class="bg-glow glow2"></div> 
     <div class="app">
       <header class="header">
         <div class="logo">BizFlow <span>AI</span></div>
@@ -33,11 +38,19 @@
           <div class="panel-header">
             <h2>Overview</h2>
             <div class="panel-sub">Key metrics and recent performance</div>
-            <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap" data-min-role="manager">
-              <button class="send-btn" type="button" onclick="downloadExport('/api/export/inventory', 'inventory.csv')">Export Inventory CSV</button>
-              <button class="send-btn" type="button" onclick="downloadExport('/api/export/customers', 'customers.csv')">Export Customers CSV</button>
-              <button class="send-btn" type="button" onclick="downloadExport('/api/export/orders', 'orders.csv')">Export Orders CSV</button>
-            </div>
+           <div class="export-actions" data-min-role="manager">
+  <button class="btn-secondary" onclick="downloadExport('/api/export/inventory', 'inventory.csv')">
+    📦 Inventory
+  </button>
+
+  <button class="btn-secondary" onclick="downloadExport('/api/export/customers', 'customers.csv')">
+    👤 Customers
+  </button>
+
+  <button class="btn-secondary" onclick="downloadExport('/api/export/orders', 'orders.csv')">
+    📑 Orders
+  </button>
+</div>
           </div>
 
           <div class="stats-grid">

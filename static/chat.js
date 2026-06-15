@@ -79,7 +79,7 @@ function appendAiMsg(reply, actions, validation) {
 
 async function loadChatHistory() {
   try {
-    const res = await fetchWithAuth('/api/chat/history?limit=30');
+    const res = await fetchWithAuth(`/api/chat/history?limit=30&session_id=${encodeURIComponent(chatSessionId)}`);
     if (!res.ok) return;
     const history = await res.json();
     const area = document.getElementById('chatArea');
@@ -98,6 +98,17 @@ async function loadChatHistory() {
   }
 }
 
+function escapeHtml(text) {
+  if (text === null || text === undefined) return '';
+
+  return text
+    .toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 async function sendMessage() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
@@ -122,8 +133,9 @@ async function sendMessage() {
     hideTyping();
 
     if (!res.ok || data.error) {
-      appendMsg('error', escapeHtml(data.error || 'Request failed') + (data.details ? ': ' + escapeHtml(data.details) : ''));
-      toast(data.error || 'Chat failed', 'error', 6000);
+      const errMsg = data.message || (typeof data.error === 'string' ? data.error : 'Request failed');
+      appendMsg('error', escapeHtml(errMsg) + (data.details ? ': ' + escapeHtml(data.details) : ''));
+      toast(errMsg || 'Chat failed', 'error', 6000);
     } else {
       appendAiMsg(data.reply || 'Done.', data.actions || [], data.validation || []);
       if (data.approval_required) {

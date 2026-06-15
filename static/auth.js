@@ -23,7 +23,7 @@ async function fetchWithAuth(url, options = {}) {
     ...(getAccessToken() ? { Authorization: `Bearer ${getAccessToken()}` } : {}),
   };
 
-  const response = await fetch(url, { ...options, headers });
+  const response = await fetch(apiUrl(url), { ...options, headers });
   if (response.status === 401) {
     logout();
     throw new Error('Unauthorized');
