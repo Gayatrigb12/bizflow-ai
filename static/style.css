@@ -195,6 +195,122 @@ body {
   margin-top: 4px;
 }
 
+.panel-actions {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.panel-actions input,
+.panel-actions select {
+  min-width: 180px;
+  max-width: 320px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.alert-banner {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(226, 75, 74, 0.14);
+  color: var(--accent);
+  border: 1px solid rgba(226, 75, 74, 0.3);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+}
+
+.pending-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.approval-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.approval-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.approval-label {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.approval-meta,
+.approval-info {
+  color: var(--text-muted);
+  font-size: 12px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.approval-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.approval-text,
+.approval-item {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.approval-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.approval-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.approval-comment {
+  flex: 1;
+  min-height: 72px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  resize: vertical;
+}
+
+.approve-btn {
+  background: var(--accent);
+  color: #0a0a0a;
+}
+
+.reject-btn {
+  background: #b02a2a;
+  color: #fff;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

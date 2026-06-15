@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Customers - BizFlow</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/auth.js"></script>
+    <script src="/static/events.js"></script>
+    <script src="/static/nav.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="logo">BizFlow <span>AI</span></div>
+        <div class="model-badge">Customers</div>
+        <button class="send-btn" onclick="logout()" style="margin-left:auto;">Logout</button>
+      </header>
+
+      <aside class="sidebar" id="appSidebar">
+        <a class="nav-item" href="/dashboard" data-min-role="manager">Dashboard</a>
+        <a class="nav-item" href="/chat">AI Chat <span class="nav-badge">AI</span></a>
+        <a class="nav-item" href="/inventory">Inventory</a>
+        <a class="nav-item" href="/orders">Orders</a>
+        <a class="nav-item active" href="/customers">Customers</a>
+        <a class="nav-item" href="/reports" data-min-role="manager">Reports</a>
+        <a class="nav-item" href="/approvals" data-min-role="manager">Approvals</a>
+      </aside>
+
+      <main class="main">
+        <section class="panel active">
+          <div class="panel-header">
+            <h2>Customers</h2>
+            <div class="panel-sub">Customer list and profiles — click a row to view purchase history</div>
+            <div class="panel-actions">
+              <input id="customersSearch" type="search" placeholder="Search customers..." />
+              <select id="customersFilter">
+                <option value="all">All customers</option>
+                <option value="repeat">Repeat customers</option>
+                <option value="newest">Newest customers</option>
+              </select>
+            </div>
+          </div>
+
+          <form id="customerForm" data-min-role="manager" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end">
+            <div><label class="section-title">Name</label><input name="name" required /></div>
+            <div><label class="section-title">Phone</label><input name="phone" /></div>
+            <div><label class="section-title">Email</label><input name="email" type="email" /></div>
+            <div><label class="section-title">Address</label><input name="address" /></div>
+            <button class="send-btn" type="submit">Add Customer</button>
+          </form>
+
+          <div id="customersList" class="customers-list"></div>
+
+          <div id="customerProfilePanel" style="display:none;margin-top:20px;padding:16px;border:1px solid var(--border);border-radius:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <h3 id="profileName">Customer</h3>
+              <button id="closeProfileBtn" class="send-btn" type="button">Close</button>
+            </div>
+            <div class="stats-grid" style="margin-bottom:16px">
+              <div class="stat-card"><div class="stat-label">Phone</div><div class="stat-value" id="profilePhone">—</div></div>
+              <div class="stat-card"><div class="stat-label">Email</div><div class="stat-value" id="profileEmail">—</div></div>
+              <div class="stat-card"><div class="stat-label">Total Spent</div><div class="stat-value" id="profileSpent">—</div></div>
+              <div class="stat-card"><div class="stat-label">Orders</div><div class="stat-value" id="profileOrders">—</div></div>
+            </div>
+            <div class="panel-sub" id="profileAddress"></div>
+            <h4 style="margin-top:16px">Purchase History</h4>
+            <div id="purchaseHistory"></div>
+
+            <form id="editCustomerForm" data-min-role="manager" style="margin-top:20px;display:grid;gap:8px;max-width:520px">
+              <input type="hidden" id="editCustomerId" />
+              <div><label class="section-title">Name</label><input id="editName" required /></div>
+              <div><label class="section-title">Phone</label><input id="editPhone" /></div>
+              <div><label class="section-title">Email</label><input id="editEmail" type="email" /></div>
+              <div><label class="section-title">Address</label><input id="editAddress" /></div>
+              <div style="display:flex;gap:8px">
+                <button class="send-btn" type="submit">Save Changes</button>
+                <button id="deleteCustomerBtn" class="send-btn" type="button" style="background:#a33;color:#fff">Delete Customer</button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toastContainer" style="position:fixed;right:18px;bottom:18px;z-index:10000;display:flex;flex-direction:column;gap:8px"></div>
+    <script src="/static/customers.js"></script>
+  </body>
+</html>

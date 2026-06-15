@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Chat - BizFlow</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/auth.js"></script>
+    <script src="/static/events.js"></script>
+    <script src="/static/nav.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="logo">BizFlow <span>AI</span></div>
+        <div class="model-badge">Groq · llama-3.3-70b</div>
+        <div class="header-status"><div class="pulse-dot"></div> <span id="statusText">Ready</span></div>
+        <button class="send-btn" onclick="logout()" style="margin-left:auto;">Logout</button>
+      </header>
+
+      <aside class="sidebar" id="appSidebar">
+        <a class="nav-item" href="/dashboard" data-min-role="manager">Dashboard</a>
+        <a class="nav-item active" href="/chat">AI Chat <span class="nav-badge">AI</span></a>
+        <a class="nav-item" href="/inventory">Inventory</a>
+        <a class="nav-item" href="/orders">Orders</a>
+        <a class="nav-item" href="/customers">Customers</a>
+        <a class="nav-item" href="/reports" data-min-role="manager">Reports</a>
+        <a class="nav-item" href="/approvals" data-min-role="manager">Approvals</a>
+      </aside>
+
+      <main class="main">
+        <section class="panel active">
+          <div class="panel-header">
+            <h2>AI Assistant</h2>
+            <div class="panel-sub">Type natural language commands to manage your business</div>
+          </div>
+          <div id="chatArea" class="chat-area"></div>
+          <div class="chips">
+            <button class="chip" type="button" onclick="sendChip('Add product Rice at ₹60 per kg, quantity 100')">Add product Rice</button>
+            <button class="chip" type="button" onclick="sendChip('Create invoice for Rahul for 3 Rice')">Create invoice</button>
+            <button class="chip" type="button" onclick="sendChip('Add customer Priya, phone 9876543210')">Add customer</button>
+            <button class="chip" type="button" onclick="sendChip('Show low stock items')">Low stock</button>
+            <button class="chip" type="button" onclick="sendChip('What is my total revenue this month?')">Revenue</button>
+          </div>
+          <div class="chat-input-row">
+            <textarea id="chatInput" placeholder="Ask BizFlow anything…" rows="2"></textarea>
+            <button id="sendBtn" class="send-btn" type="button" onclick="sendMessage()">Send</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toastContainer" style="position:fixed;right:18px;bottom:18px;z-index:10000;display:flex;flex-direction:column;gap:8px"></div>
+    <script src="/static/chat.js"></script>
+  </body>
+</html>

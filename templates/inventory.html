@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Inventory - BizFlow</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/auth.js"></script>
+    <script src="/static/events.js"></script>
+    <script src="/static/nav.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="logo">BizFlow <span>AI</span></div>
+        <div class="model-badge">Inventory</div>
+        <button class="send-btn" onclick="logout()" style="margin-left:auto;">Logout</button>
+      </header>
+
+      <aside class="sidebar" id="appSidebar">
+        <a class="nav-item" href="/dashboard" data-min-role="manager">Dashboard</a>
+        <a class="nav-item" href="/chat">AI Chat <span class="nav-badge">AI</span></a>
+        <a class="nav-item active" href="/inventory">Inventory</a>
+        <a class="nav-item" href="/orders">Orders</a>
+        <a class="nav-item" href="/customers">Customers</a>
+        <a class="nav-item" href="/reports" data-min-role="manager">Reports</a>
+        <a class="nav-item" href="/approvals" data-min-role="manager">Approvals</a>
+      </aside>
+
+      <main class="main">
+        <section class="panel active">
+          <div class="panel-header">
+            <h2>Inventory</h2>
+            <div class="panel-sub">Create and manage products</div>
+            <div class="panel-actions">
+              <input id="inventorySearch" type="search" placeholder="Search inventory..." />
+              <select id="inventoryFilter">
+                <option value="all">All products</option>
+                <option value="low">Low stock only</option>
+                <option value="in_stock">In stock</option>
+              </select>
+            </div>
+            <div id="lowStockBanner" class="alert-banner" hidden></div>
+          </div>
+
+          <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-end">
+            <form id="productForm" style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+              <input type="hidden" id="p_id" />
+              <div>
+                <label class="section-title">Name</label>
+                <input id="p_name" />
+              </div>
+              <div>
+                <label class="section-title">SKU</label>
+                <input id="p_sku" />
+              </div>
+              <div>
+                <label class="section-title">Price</label>
+                <input id="p_price" type="number" step="0.01" />
+              </div>
+              <div>
+                <label class="section-title">Qty</label>
+                <input id="p_qty" type="number" step="0.01" />
+              </div>
+              <div>
+                <label class="section-title">Unit</label>
+                <input id="p_unit" />
+              </div>
+              <div>
+                <button id="createBtn" class="send-btn" type="submit">Save</button>
+                <button id="cancelEdit" class="send-btn" type="button" style="margin-left:6px">×</button>
+              </div>
+            </form>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+            <button class="send-btn" type="button" data-min-role="manager" onclick="downloadExport('/api/export/inventory', 'inventory.csv')">Export Inventory CSV</button>
+          </div>
+          <div id="inventoryGrid" class="inventory-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toastContainer" style="position:fixed;right:18px;bottom:18px;z-index:10000;display:flex;flex-direction:column;gap:8px"></div>
+
+    <script src="/static/inventory.js"></script>
+  </body>
+</html>

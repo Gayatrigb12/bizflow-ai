@@ -30,9 +30,20 @@ Create or edit **`.env`** in the `bizflow-ai` folder:
 
 ```
 GROQ_API_KEY=gsk_your_actual_key_here
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/bizflowdb
+JWT_SECRET_KEY=replace-with-a-secure-key
 ```
 
-Never commit `.env` to version control. The key is only read in `app.py`.
+Never commit `.env` to version control.
+
+### Database setup
+
+1. Install PostgreSQL 16+ with the pgvector extension.
+2. Create the database: `bizflowdb`.
+3. Run migrations: `alembic -c backend/alembic.ini upgrade head`
+4. Verify and seed data: `python -m backend.scripts.verify_db --fix`
+
+This imports legacy `data/store.json` if tables are empty and creates an admin user (`admin` / `changeme`) when needed.
 
 On startup, the server prints a **masked** key (`gsk_...last4`) or a warning if missing.
 

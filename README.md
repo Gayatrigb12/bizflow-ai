@@ -27,6 +27,8 @@
 4. Create `.env` file (or edit the existing one):
    ```
    GROQ_API_KEY=gsk_your_key_here
+   DATABASE_URL=postgresql://user:password@localhost:5432/bizflow
+   JWT_SECRET_KEY=replace-with-a-secure-key
    ```
 
 5. Run the app:
