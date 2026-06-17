@@ -80,12 +80,48 @@ class OrderService:
         index_order_embedding(self.session, updated)
         return updated
 
-    def update_order_status(self, invoice_number: str, status: str) -> Optional[Order]:
-        order = self.repository.get_by_invoice_number(invoice_number)
+    # def update_order_status(self, invoice_number: str, status: str) -> Optional[Order]:
+    #     order = self.repository.get_by_invoice_number(invoice_number)
+    #     if not order:
+    #         return None
+    #     order.status = status
+    #     return self.repository.update(order)
+
+    def update_order_status(self, invoice_number, status):
+        order = self.session.query(Order).filter_by(invoice_number=invoice_number).first()
+
         if not order:
             return None
-        order.status = status
-        return self.repository.update(order)
 
+        order.status = status
+
+        self.session.commit()
+        self.session.refresh(order)   # ✅ ensure latest state is loaded
+
+        return order.to_dict()        # ✅ RETURN DICT, NOT ORM OBJECT
+    def delete_order(self, invoice_number: str) -> Optional[Order]:
+        order = self.repository.get_by_invoice_number(invoice_number)
+
+        if not order:
+            return None
+
+        # Optional business rule:
+        if order.status not in ['draft', 'cancelled']:
+            raise ValueError('Only draft or cancelled orders can be deleted')
+
+        # Restore inventory stock before deleting
+        for item in order.items:
+            if item.product:
+                self.inventory_service.adjust_stock(
+                    item.product.name,
+                    item.quantity
+                )
+
+        self.session.delete(order)
+        self.session.commit()
+
+        return order
     def _generate_invoice_number(self) -> str:
         return f'INV-{self.repository.get_max_invoice_sequence() + 1}'
+
+    

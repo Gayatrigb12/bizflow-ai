@@ -29,13 +29,50 @@ def api_create_order():
     return jsonify(order.to_dict())
 
 
+# @order_bp.route('/api/orders/<invoice_number>', methods=['PATCH'])
+# @requires_roles('staff', 'manager', 'admin')
+# def api_update_order_status(invoice_number: str):
+#     payload = request.get_json(silent=True) or {}
+#     status = str(payload.get('status') or '')
+#     with get_db_session() as session:
+#         order = OrderService(session).update_order_status(invoice_number, status)
+#         if not order:
+#             return jsonify({'error': 'Order not found'}), 404
+#     return jsonify(order.to_dict())
+
+
 @order_bp.route('/api/orders/<invoice_number>', methods=['PATCH'])
 @requires_roles('staff', 'manager', 'admin')
 def api_update_order_status(invoice_number: str):
     payload = request.get_json(silent=True) or {}
     status = str(payload.get('status') or '')
+
     with get_db_session() as session:
-        order = OrderService(session).update_order_status(invoice_number, status)
+    #     order = OrderService(session).update_order_status(invoice_number, status)
+
+    #     if not order:
+    #         return jsonify({'error': 'Order not found'}), 404
+
+    #     response_data = order.to_dict()
+
+    # return jsonify(response_data)
+     order = OrderService(session).update_order_status(invoice_number, status)
+
+    if not order:
+        return jsonify({'error': 'Order not found'}), 404
+
+    return jsonify(order)   # ✅ already dict
+
+@order_bp.route('/api/orders/<invoice_number>', methods=['DELETE'])
+@requires_roles('manager', 'admin')
+def api_delete_order(invoice_number: str):
+    with get_db_session() as session:
+        order = OrderService(session).delete_order(invoice_number)
+
         if not order:
             return jsonify({'error': 'Order not found'}), 404
-    return jsonify(order.to_dict())
+
+    return jsonify({
+        'message': 'Order deleted successfully',
+        'invoice_number': invoice_number
+    })

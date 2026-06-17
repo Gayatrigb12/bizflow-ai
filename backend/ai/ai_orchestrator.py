@@ -46,6 +46,7 @@ class AIOrchestrator:
             raw_responses.append(raw)
 
             if raw.get('error'):
+                print('AI provider error:', raw['error'])
                 return self._error_result(
                     'The AI service is temporarily unavailable. Please try again.',
                     raw=raw,

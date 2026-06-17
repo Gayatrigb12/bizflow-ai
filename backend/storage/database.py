@@ -35,7 +35,13 @@ else:
         pool_recycle=1800,
     )
 
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
+# SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
+SessionLocal = sessionmaker(
+    bind=engine,
+    autoflush=False,
+    autocommit=False,
+    expire_on_commit=False   # ✅ ADD THIS
+)
 
 
 def pgvector_enabled() -> bool:
