@@ -1,4 +1,5 @@
 from typing import List, Optional
+import re
 
 from backend.embeddings.manager import index_product_embedding
 from backend.storage.database import get_db_session
@@ -19,6 +20,37 @@ class InventoryService:
 
     def find_by_name(self, name: str) -> Optional[Product]:
         return self.repository.get_by_name(name)
+
+    def resolve_product(self, name: str) -> Optional[Product]:
+        normalized = name.strip()
+        if not normalized:
+            return None
+
+        product = self.find_by_name(normalized)
+        if product:
+            return product
+
+        cleaned = re.sub(
+            r'^[\d.]+\s*(?:kg|g|pcs|pc|ltr|l|ml|units?)\s+',
+            '',
+            normalized,
+            flags=re.IGNORECASE,
+        ).strip()
+        if cleaned and cleaned != normalized:
+            product = self.find_by_name(cleaned)
+            if product:
+                return product
+
+        search_term = cleaned or normalized
+        matches = self.repository.search_by_name(search_term)
+        if not matches:
+            return None
+
+        lower = search_term.lower()
+        for candidate in matches:
+            if candidate.name.lower() == lower:
+                return candidate
+        return matches[0]
 
     def create_or_update_product(
         self,

@@ -1,62 +1,16 @@
-import os
-import re
 import json
 import logging
-from typing import Dict, Any
+import os
+from typing import Any, Dict, List, Optional
 
 from backend.ai.groq_provider import GroqProvider
-from backend.ai.prompt_builder import build_system_prompt, extract_json_from_model
-from backend.ai.context_builder import ContextBuilder
-from backend.ai.action_validator import ActionValidator
-from backend.services.customer_service import CustomerService
-from backend.services.inventory_service import InventoryService
-from backend.services.order_service import OrderService
+from backend.ai.prompt_builder import build_system_prompt
+from backend.ai.tools import TOOL_DEFINITIONS, ToolExecutor, parse_tool_arguments
+from backend.services.report_service import ReportService
 
 logger = logging.getLogger(__name__)
 
-
-def _extract_json(content: str) -> Dict[str, Any] | None:
-    parsed = extract_json_from_model(content)
-    if parsed is not None:
-        return parsed
-
-    if not content or not content.strip():
-        return None
-
-    for name, candidate in _json_candidates(content):
-        try:
-            return json.loads(candidate)
-        except json.JSONDecodeError:
-            try:
-                fixed = re.sub(r',\s*([}\]])', r'\1', candidate)
-                return json.loads(fixed)
-            except json.JSONDecodeError:
-                logger.debug('JSON parse failed for strategy %s', name)
-                continue
-
-    logger.warning('Failed to parse model JSON response')
-    return None
-
-
-def _json_candidates(content: str):
-    yield 'direct', content.strip()
-
-    match = re.search(r'```(?:json)?\s*([\s\S]*?)```', content, re.IGNORECASE)
-    if match:
-        yield 'fence', match.group(1).strip()
-
-    for index, char in enumerate(content):
-        if char != '{':
-            continue
-        depth = 0
-        for end, ch in enumerate(content[index:], index):
-            if ch == '{':
-                depth += 1
-            elif ch == '}':
-                depth -= 1
-                if depth == 0:
-                    yield 'brace', content[index:end + 1]
-                    break
+MAX_TOOL_ITERATIONS = 8
 
 
 class AIOrchestrator:
@@ -64,67 +18,98 @@ class AIOrchestrator:
         self.session = session
         api_key = os.getenv('GROQ_API_KEY', '')
         self.provider = provider or GroqProvider(api_key=api_key)
-        self.context_builder = ContextBuilder(session)
 
-    def orchestrate(self, message: str) -> Dict[str, Any]:
-        context = self.context_builder.build(message)
-        prompt = build_system_prompt(context)
+    def orchestrate(
+        self,
+        message: str,
+        actor: str = 'AI',
+        history: Optional[List[Dict[str, str]]] = None,
+    ) -> Dict[str, Any]:
+        system_prompt = build_system_prompt(ReportService(self.session).build_dashboard_state())
+        messages: List[Dict[str, Any]] = [{'role': 'system', 'content': system_prompt}]
 
-        logger.info('Calling AI provider for chat message')
-        raw = self.provider.generate_response(prompt, message)
+        for turn in history or []:
+            role = turn.get('role')
+            content = turn.get('content')
+            if role in ('user', 'assistant') and content:
+                messages.append({'role': role, 'content': str(content)})
 
-        choices = raw.get('choices') or []
-        if not choices:
-            return {
-                'reply': 'The AI service returned an unexpected response. Please try again.',
-                'raw': raw,
-                'actions': [],
-                'validation': [],
-                'all_valid': False,
-            }
+        messages.append({'role': 'user', 'content': message})
 
-        content = choices[0].get('message', {}).get('content', '')
-        parsed = _extract_json(content)
+        tool_executor = ToolExecutor(self.session, actor=actor)
+        reply = ''
+        raw_responses: List[Dict[str, Any]] = []
 
-        if parsed is None:
-            return {
-                'reply': 'Sorry, I could not understand the AI response. Please try again.',
-                'raw': raw,
-                'raw_content': content,
-                'actions': [],
-                'validation': [],
-                'all_valid': False,
-            }
+        for iteration in range(MAX_TOOL_ITERATIONS):
+            logger.info('Calling AI provider (iteration %s)', iteration + 1)
+            raw = self.provider.chat_completion(messages, tools=TOOL_DEFINITIONS)
+            raw_responses.append(raw)
 
-        inventory_service = InventoryService(self.session)
-        customer_service = CustomerService(self.session)
-        order_service = OrderService(self.session)
-        validator = ActionValidator(
-            self.session,
-            inventory_service,
-            customer_service,
-            order_service,
-        )
+            if raw.get('error'):
+                return self._error_result(
+                    'The AI service is temporarily unavailable. Please try again.',
+                    raw=raw,
+                    tool_executor=tool_executor,
+                )
 
-        actions = parsed.get('actions') if isinstance(parsed.get('actions'), list) else []
-        validation_results = []
-        all_valid = True
+            choices = raw.get('choices') or []
+            if not choices:
+                return self._error_result(
+                    'The AI service returned an unexpected response. Please try again.',
+                    raw=raw,
+                    tool_executor=tool_executor,
+                )
 
-        for act in actions:
-            res = validator.validate(act)
-            validation_results.append({
-                'action': act,
-                'valid': res.valid,
-                'errors': res.errors,
-                'requires_approval': res.requires_approval,
-            })
-            if not res.valid:
-                all_valid = False
+            assistant_message = choices[0].get('message', {})
+            tool_calls = assistant_message.get('tool_calls') or []
 
+            if not tool_calls:
+                reply = str(assistant_message.get('content') or '').strip()
+                if reply:
+                    break
+                return self._error_result(
+                    'Sorry, I could not generate a response. Please try again.',
+                    raw=raw,
+                    tool_executor=tool_executor,
+                )
+
+            messages.append(assistant_message)
+
+            for tool_call in tool_calls:
+                function = tool_call.get('function') or {}
+                tool_name = function.get('name', '')
+                arguments = parse_tool_arguments(function.get('arguments'))
+                logger.info('Executing tool: %s', tool_name)
+                result = tool_executor.execute(tool_name, arguments)
+                messages.append({
+                    'role': 'tool',
+                    'tool_call_id': tool_call.get('id'),
+                    'content': json.dumps(result, default=str),
+                })
+        else:
+            reply = reply or 'I gathered the data but need another message to finish. Please try again.'
+
+        all_valid = all(item.get('valid', True) for item in tool_executor.validation_results)
         return {
-            'reply': parsed.get('reply', ''),
-            'raw': raw,
-            'actions': actions,
-            'validation': validation_results,
+            'reply': reply,
+            'actions': tool_executor.executed_writes,
+            'validation': tool_executor.validation_results,
             'all_valid': all_valid,
+            'actions_executed': True,
+            'pending_action_ids': tool_executor.pending_action_ids,
+            'approval_required': bool(tool_executor.pending_action_ids),
+            'raw': raw_responses[-1] if raw_responses else None,
+        }
+
+    @staticmethod
+    def _error_result(message: str, raw: Any, tool_executor: ToolExecutor) -> Dict[str, Any]:
+        return {
+            'reply': message,
+            'raw': raw,
+            'actions': tool_executor.executed_writes,
+            'validation': tool_executor.validation_results,
+            'all_valid': False,
+            'actions_executed': True,
+            'pending_action_ids': tool_executor.pending_action_ids,
+            'approval_required': bool(tool_executor.pending_action_ids),
         }

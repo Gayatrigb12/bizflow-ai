@@ -62,8 +62,10 @@ def api_chat():
             )
             return jsonify(response)
         except ValueError as exc:
+            session.rollback()
             return structured_error(str(exc), code=400)
         except Exception as exc:
+            session.rollback()
             logger.error('Chat processing failed: %s\n%s', exc, traceback.format_exc())
             return structured_error(
                 'Chat processing failed',

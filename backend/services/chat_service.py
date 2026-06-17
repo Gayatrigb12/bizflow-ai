@@ -71,6 +71,17 @@ Respond ONLY in JSON:
                     pass
         return None
 
+    def _build_chat_history(self, session_id: Optional[str], limit: int = 10) -> List[Dict[str, str]]:
+        if not session_id:
+            return []
+
+        messages = self.chat_message_repository.list_recent(limit=limit, session_id=session_id)
+        history: List[Dict[str, str]] = []
+        for message in reversed(messages):
+            history.append({'role': 'user', 'content': message.user_prompt})
+            history.append({'role': 'assistant', 'content': message.ai_response})
+        return history
+
     def process_message(
         self,
         message: str,
@@ -81,13 +92,17 @@ Respond ONLY in JSON:
             raise ValueError('Message is required')
 
         orchestrator = AIOrchestrator(self.session)
-        result = orchestrator.orchestrate(message)
+        result = orchestrator.orchestrate(
+            message,
+            actor=actor or 'AI',
+            history=self._build_chat_history(session_id),
+        )
 
-        executed: List[Dict[str, Any]] = []
-        approval_required = any(v.get('requires_approval') for v in result.get('validation', []))
-        pending_action_id = None
+        executed: List[Dict[str, Any]] = result.get('actions', [])
+        approval_required = result.get('approval_required', False)
+        pending_action_id = result.get('pending_action_ids', [None])[0] if result.get('pending_action_ids') else None
 
-        if result.get('all_valid'):
+        if not result.get('actions_executed') and result.get('all_valid'):
             if approval_required and result.get('actions'):
                 pending = PendingActionService(self.session).create_pending_action(
                     result.get('actions', []),
@@ -107,6 +122,8 @@ Respond ONLY in JSON:
 
         if pending_action_id is not None:
             response['pending_action_id'] = pending_action_id
+            response['approval_required'] = True
+        elif approval_required:
             response['approval_required'] = True
 
         context_type = _context_type_from_actions(executed or result.get('actions', []))
