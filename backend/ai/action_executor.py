@@ -42,7 +42,13 @@ def execute_action(session, action: Dict[str, Any], actor: str = 'AI') -> Dict[s
             payment_status=str(action.get('payment_status') or 'paid'),
         )
         activity_repository.log('order', f"Created order {order.invoice_number}", actor)
-        return {'type': 'create_order', 'invoice_number': order.invoice_number}
+        return {
+            'type': 'create_order',
+            'invoice_number': order.invoice_number,
+            'total': float(order.total or 0.0),
+            'customer': order.customer.name if order.customer else None,
+            'items': [item.to_dict() for item in order.items],
+        }
 
     if action_type == 'add_customer':
         customer = customer_service.create_customer(

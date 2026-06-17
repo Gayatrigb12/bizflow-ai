@@ -49,8 +49,14 @@ class OrderService:
         for item_data in items:
             name = str(item_data.get('name') or '').strip()
             quantity = float(item_data.get('qty') or item_data.get('quantity') or 0.0)
-            product = self.inventory_service.find_by_name(name)
-            unit_price = float(product.price) if product else 0.0
+            product = self.inventory_service.resolve_product(name)
+            explicit_price = item_data.get('price', item_data.get('unit_price'))
+            if product:
+                unit_price = float(product.price)
+            elif explicit_price is not None:
+                unit_price = float(explicit_price)
+            else:
+                unit_price = 0.0
             line_total = round(unit_price * quantity, 2)
             subtotal += line_total
 
@@ -64,7 +70,7 @@ class OrderService:
             self.session.add(order_item)
 
             if product:
-                self.inventory_service.adjust_stock(name, -quantity)
+                self.inventory_service.adjust_stock(product.name, -quantity)
 
         order.subtotal = subtotal
         order.tax = 0.0
@@ -82,9 +88,4 @@ class OrderService:
         return self.repository.update(order)
 
     def _generate_invoice_number(self) -> str:
-        latest_invoice = self.repository.get_latest_invoice() or 'INV-1000'
-        try:
-            sequence = int(latest_invoice.split('-')[-1])
-        except ValueError:
-            sequence = 1000
-        return f'INV-{sequence + 1}'
+        return f'INV-{self.repository.get_max_invoice_sequence() + 1}'

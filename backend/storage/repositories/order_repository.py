@@ -49,5 +49,18 @@ class OrderRepository:
         row = result.scalar_one_or_none()
         return row
 
+    def get_max_invoice_sequence(self) -> int:
+        invoice_numbers = self.session.execute(select(Order.invoice_number)).scalars().all()
+        max_sequence = 1000
+        for invoice_number in invoice_numbers:
+            if not invoice_number:
+                continue
+            suffix = str(invoice_number).rsplit('-', 1)[-1]
+            try:
+                max_sequence = max(max_sequence, int(suffix))
+            except ValueError:
+                continue
+        return max_sequence
+
     def delete(self, order: Order) -> None:
         self.session.delete(order)
